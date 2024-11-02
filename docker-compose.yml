@@ -20,39 +20,39 @@ services:
       - NATS_SERVERS=nats://nats-server:4222 # "nats-server" hace referencia al servicio declarado arriba del client gateway
 
 
-  products-ms:
-    build: ./products-ms  # Ruta al Dockerfile del microservicio de productos
-    volumes:
-      - ./products-ms/src:/usr/src/app/src  # Sincroniza el código fuente local con el contenedor
-    command: npm run start:dev  # Ejecuta el servicio en modo de desarrollo
-    environment:
-      - PORT=3001  # Variable de entorno para el puerto del microservicio
-      - NATS_SERVERS=nats://nats-server:4222  # Conexión con el servidor NATS
-      - DATABASE_URL=file:./dev.db  # Conexión con la base de datos local (Prisma)
+  # products-ms:
+  #   build: ./products-ms  # Ruta al Dockerfile del microservicio de productos
+  #   volumes:
+  #     - ./products-ms/src:/usr/src/app/src  # Sincroniza el código fuente local con el contenedor
+  #   command: npm run start:dev  # Ejecuta el servicio en modo de desarrollo
+  #   environment:
+  #     - PORT=3001  # Variable de entorno para el puerto del microservicio
+  #     - NATS_SERVERS=nats://nats-server:4222  # Conexión con el servidor NATS
+  #     - DATABASE_URL=file:./dev.db  # Conexión con la base de datos local (Prisma)
 
 
-  orders-ms:
-    depends_on:
-      - orders-db
-    build: ./orders-ms  # Ruta al Dockerfile del microservicio de ordenes
-    volumes:
-      - ./orders-ms/src:/usr/src/app/src  # Sincroniza el código fuente local con el contenedor
-    command: npm run start:dev  # Ejecuta el servicio en modo de desarrollo
-    environment:
-      - PORT=3002 # Variable de entorno para el puerto del microservicio
-      - NATS_SERVERS=nats://nats-server:4222  # Conexión con el servidor NATS
-      - DATABASE_URL=postgresql://postgres:123456@orders-db:5432/ordersdb?schema=public&connect_timeout=30&pool_timeout=30&socket_timeout=30
+  # orders-ms:
+  #   depends_on:
+  #     - orders-db
+  #   build: ./orders-ms  # Ruta al Dockerfile del microservicio de ordenes
+  #   volumes:
+  #     - ./orders-ms/src:/usr/src/app/src  # Sincroniza el código fuente local con el contenedor
+  #   command: npm run start:dev  # Ejecuta el servicio en modo de desarrollo
+  #   environment:
+  #     - PORT=3002 # Variable de entorno para el puerto del microservicio
+  #     - NATS_SERVERS=nats://nats-server:4222  # Conexión con el servidor NATS
+  #     - DATABASE_URL=postgresql://postgres:123456@orders-db:5432/ordersdb?schema=public&connect_timeout=30&pool_timeout=30&socket_timeout=30
       
 
-  orders-db:
-      container_name: orders_database
-      image: postgres:16.2 
-      restart: always 
-      volumes:
-        - ./orders-ms/postgres:/var/lib/postgresql/data
-      ports: 
-        - 5433:5433
-      environment:
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=123456
-        - POSTGRES_DB=ordersdb
+  # orders-db:
+  #     container_name: orders_database
+  #     image: postgres:16.2 
+  #     restart: always 
+  #     volumes:
+  #       - ./orders-ms/postgres:/var/lib/postgresql/data
+  #     ports: 
+  #       - 5433:5433
+  #     environment:
+  #       - POSTGRES_USER=postgres
+  #       - POSTGRES_PASSWORD=123456
+  #       - POSTGRES_DB=ordersdb
