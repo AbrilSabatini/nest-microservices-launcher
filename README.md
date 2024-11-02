@@ -1,3 +1,6 @@
+# 🌐 Explora Más en la Organización
+¿Quieres ver más sobre este proyecto? Visitá la [organización en GitHub](https://github.com/Nest-Microservices-Course1). Ahí encontrarás los objetivos del curso, todos los repositorios que componen esta aplicación de microservicios y cómo levantar cada servicio de forma independiente.
+
 ## Dev 
 
 1. Clonar el repositorio 
