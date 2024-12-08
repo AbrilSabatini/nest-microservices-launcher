@@ -1,0 +1,67 @@
+services:
+
+  nats-server: 
+    image: nats:latest # Recomendado usar una versión fija
+
+  client-gateway:
+    build: 
+      context: ./client-gateway  # Ruta al Dockerfile del gateway
+      dockerfile: dockerfile.prod
+    image: client-gateway-prod # Nombre para la imagen 
+    ports:
+      - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}  # Expone el puerto 3000
+    environment:
+      - PORT=${CLIENT_GATEWAY_PORT}  # Expone la variable de entorno PORT para el servicio
+      - NATS_SERVERS=nats://nats-server:4222 # "nats-server" hace referencia al servicio declarado arriba del client gateway
+
+
+  products-ms:
+    build: 
+      context: ./products-ms  # Ruta al Dockerfile del microservicio de productos
+      dockerfile: dockerfile.prod
+    image: products-ms-prod
+    environment:
+      - PORT=3001  # Variable de entorno para el puerto del microservicio
+      - NATS_SERVERS=nats://nats-server:4222  # Conexión con el servidor NATS
+      - DATABASE_URL=file:./dev.db  # Conexión con la base de datos local (Prisma)
+
+
+  orders-ms:
+    build: 
+      context: ./orders-ms  # Ruta al Dockerfile del microservicio de ordenes
+      dockerfile: dockerfile.prod
+      args:
+        - ORDERS_DB_URL=${ORDERS_DB_URL}
+    image: orders-ms-prod
+    environment:
+      - PORT=3002 # Variable de entorno para el puerto del microservicio
+      - NATS_SERVERS=nats://nats-server:4222  # Conexión con el servidor NATS
+      - DATABASE_URL=${ORDERS_DB_URL}
+    
+
+  payments-ms:
+    build: 
+      context: ./payments-ms  # Ruta al Dockerfile del microservicio de pagos
+      dockerfile: dockerfile.prod
+    image: payments-ms-prod
+    ports:
+    - ${PAYMENTS_PORT}:${PAYMENTS_PORT}  # Expone el puerto 
+    environment:
+      - PORT=${PAYMENTS_PORT}
+      - STRIPE_SECRET=${PAYMENTS_STRIPE_SECRET}
+      - STRIPE_SUCCESS_URL=${PAYMENTS_STRIPE_SUCCESS_URL}
+      - STRIPE_CANCEL_URL=${PAYMENTS_STRIPE_CANCEL_URL}
+      - STRIPE_ENDPOINT_SECRET=${PAYMENTS_STRIPE_ENDPOINT_SECRET}
+      - NATS_SERVERS=nats://nats-server:4222  # Conexión con el servidor NATS
+ 
+
+  auth-ms:
+    build: 
+      context: ./auth-ms  # Ruta al Dockerfile del microservicio de autenticación
+      dockerfile: dockerfile.prod
+    image: auth-ms-prod
+    environment:
+      - PORT=${AUTH_PORT}
+      - NATS_SERVERS=nats://nats-server:4222  # Conexión con el servidor NATS
+      - DATABASE_URL=${AUTH_DATABASE_URL}
+      - JWT_SECRET=${AUTH_JWT_SECRET}
