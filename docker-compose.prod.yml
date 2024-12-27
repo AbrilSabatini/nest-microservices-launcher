@@ -7,7 +7,7 @@ services:
     build: 
       context: ./client-gateway  # Ruta al Dockerfile del gateway
       dockerfile: dockerfile.prod
-    image: client-gateway-prod # Nombre para la imagen 
+    image: ${IMAGE_REGISTRY}/client-gateway-prod # Nombre para la imagen 
     ports:
       - ${CLIENT_GATEWAY_PORT}:${CLIENT_GATEWAY_PORT}  # Expone el puerto 3000
     environment:
@@ -19,7 +19,7 @@ services:
     build: 
       context: ./products-ms  # Ruta al Dockerfile del microservicio de productos
       dockerfile: dockerfile.prod
-    image: products-ms-prod
+    image: ${IMAGE_REGISTRY}/products-ms-prod
     environment:
       - PORT=3001  # Variable de entorno para el puerto del microservicio
       - NATS_SERVERS=nats://nats-server:4222  # Conexión con el servidor NATS
@@ -32,7 +32,7 @@ services:
       dockerfile: dockerfile.prod
       args:
         - ORDERS_DB_URL=${ORDERS_DB_URL}
-    image: orders-ms-prod
+    image: ${IMAGE_REGISTRY}/orders-ms-prod
     environment:
       - PORT=3002 # Variable de entorno para el puerto del microservicio
       - NATS_SERVERS=nats://nats-server:4222  # Conexión con el servidor NATS
@@ -43,7 +43,7 @@ services:
     build: 
       context: ./payments-ms  # Ruta al Dockerfile del microservicio de pagos
       dockerfile: dockerfile.prod
-    image: payments-ms-prod
+    image: ${IMAGE_REGISTRY}/payments-ms-prod
     ports:
     - ${PAYMENTS_PORT}:${PAYMENTS_PORT}  # Expone el puerto 
     environment:
@@ -59,7 +59,7 @@ services:
     build: 
       context: ./auth-ms  # Ruta al Dockerfile del microservicio de autenticación
       dockerfile: dockerfile.prod
-    image: auth-ms-prod
+    image: ${IMAGE_REGISTRY}/auth-ms-prod
     environment:
       - PORT=${AUTH_PORT}
       - NATS_SERVERS=nats://nats-server:4222  # Conexión con el servidor NATS
